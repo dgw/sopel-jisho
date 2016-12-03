@@ -45,9 +45,11 @@ def fetch_result(query):
     except IndexError:
         return "No results."
 
-    word = entry['japanese'][0].get('word') or query
-    furigana = [item['reading'] for item in entry['japanese'] if
+    word = entry['japanese'][0].get('word') or ''
+    furigana = [item['reading'] for item in entry['japanese'] if not word or
                 (item.get('word') or query) == word and item.get('reading')]
-    readings = ' ({readings})'.format(readings=', '.join(furigana)) if len(furigana) else ''
+    readings = ', '.join(furigana) if len(furigana) else ''
+    if word:
+        readings = " ({readings})".format(readings=readings)
     meaning = ', '.join(entry['senses'][0]['english_definitions'])
     return "{word}{readings}: {meaning}".format(word=word, readings=readings, meaning=meaning)
