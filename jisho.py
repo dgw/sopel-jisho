@@ -49,7 +49,7 @@ def fetch_result(query):
     furigana = [item['reading'] for item in entry['japanese'] if not word or
                 (item.get('word') or query) == word and item.get('reading')]
     readings = ', '.join(furigana) if len(furigana) else ''
-    if word:
+    if word and readings:
         readings = " ({readings})".format(readings=readings)
     meaning = ', '.join(entry['senses'][0]['english_definitions'])
     return "{word}{readings}: {meaning}".format(word=word, readings=readings, meaning=meaning)
