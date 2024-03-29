@@ -8,7 +8,7 @@ from __future__ import unicode_literals
 from sopel.module import commands, example
 import requests
 
-api_url = 'http://jisho.org/api/v1/search/words?keyword=%s'
+api_url = 'https://jisho.org/api/v1/search/words?keyword=%s'
 
 
 @commands('jisho', 'ji')
