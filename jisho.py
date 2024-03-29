@@ -5,8 +5,11 @@ Licensed under the GPL v3.0 or later
 """
 
 from __future__ import unicode_literals
-from sopel.module import commands, example
+
+from sopel.plugin import commands, example
+
 import requests
+
 
 api_url = 'https://jisho.org/api/v1/search/words?keyword=%s'
 request_headers = {
