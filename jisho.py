@@ -9,6 +9,9 @@ from sopel.module import commands, example
 import requests
 
 api_url = 'https://jisho.org/api/v1/search/words?keyword=%s'
+request_headers = {
+    'User-Agent': 'sopel-jisho (https://github.com/dgw/sopel-jisho)',
+}
 
 
 @commands('jisho', 'ji')
@@ -22,7 +25,10 @@ def fetch_result(query):
     if not query:
         return "No search query provided."
     try:
-        r = requests.get(url=api_url % query, timeout=(10.0, 4.0))
+        r = requests.get(
+            url=api_url % query,
+            headers=request_headers,
+            timeout=(10.0, 4.0),)
     except requests.exceptions.ConnectTimeout:
         return "Connection timed out."
     except requests.exceptions.ConnectionError:
