@@ -22,7 +22,7 @@ request_headers = {
 @plugin.example('.ji onsen')
 def jisho(bot, trigger):
     query = trigger.group(2) or None
-    bot.say("[Jisho] %s" % fetch_result(query))
+    bot.say(fetch_result(query))
 
 
 def fetch_result(query):
