@@ -38,7 +38,7 @@ def fetch_result(query):
     try:
         r.raise_for_status()
     except requests.exceptions.HTTPError as e:
-        return "HTTP error: " + e.message
+        return "HTTP error: " + str(e)
     try:
         data = r.json()
     except ValueError:
