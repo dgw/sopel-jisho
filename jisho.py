@@ -6,7 +6,7 @@ Licensed under the GPL v3.0 or later
 
 from __future__ import unicode_literals
 
-from sopel.plugin import commands, example
+from sopel import plugin
 
 import requests
 
@@ -17,8 +17,9 @@ request_headers = {
 }
 
 
-@commands('jisho', 'ji')
-@example('.ji onsen')
+@plugin.commands('jisho', 'ji')
+@plugin.output_prefix('[jisho] ')
+@plugin.example('.ji onsen')
 def jisho(bot, trigger):
     query = trigger.group(2) or None
     bot.say("[Jisho] %s" % fetch_result(query))
