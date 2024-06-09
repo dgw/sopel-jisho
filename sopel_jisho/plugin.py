@@ -1,10 +1,11 @@
-"""
-jisho.py - Jisho lookup module for Sopel
+"""sopel-jisho
+
+Jisho lookup plugin for Sopel IRC bots.
+
 Copyright 2016, dgw
 Licensed under the GPL v3.0 or later
 """
-
-from __future__ import unicode_literals
+from __future__ import annotations
 
 from sopel import plugin
 
