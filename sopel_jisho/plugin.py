@@ -23,10 +23,23 @@ request_headers = {
 @plugin.example('.ji onsen')
 def jisho(bot, trigger):
     query = trigger.group(2) or None
-    bot.say(fetch_result(query))
+    bot.say(fetch_result(query), truncation='...')
 
 
-def fetch_result(query):
+# Tempted to use TypedDict and specify the expected keys, but... overkill
+def format_words_and_readings(items: list[dict[str, str]]) -> str:
+    forms = []
+    for item in items:
+        word = item.get('word') or item.get('reading') or ''
+        reading = item.get('reading')
+        if reading and reading != word:
+            word = "{word} ({reading})".format(word=word, reading=reading)
+        if word and word not in forms:
+            forms.append(word)
+    return ', '.join(forms)
+
+
+def fetch_result(query: str | None) -> str:
     if not query:
         return "No search query provided."
     try:
@@ -56,11 +69,20 @@ def fetch_result(query):
     except IndexError:
         return "No results."
 
-    word = entry['japanese'][0].get('word') or ''
-    furigana = [item['reading'] for item in entry['japanese'] if not word or
-                (item.get('word') or query) == word and item.get('reading')]
-    readings = ', '.join(furigana) if len(furigana) else ''
-    if word and readings:
-        readings = " ({readings})".format(readings=readings)
-    meaning = ', '.join(entry['senses'][0]['english_definitions'])
-    return "{word}{readings}: {meaning}".format(word=word, readings=readings, meaning=meaning)
+    japanese = entry['japanese']
+    word = format_words_and_readings(japanese[:1])
+    meanings = []
+    for number, sense in enumerate(entry['senses'], start=1):
+        parts_of_speech = ', '.join(sense.get('parts_of_speech', []))
+        definitions = ', '.join(sense['english_definitions'])
+        part_of_speech = " ({})".format(parts_of_speech) if parts_of_speech else ''
+        meanings.append("{number}.{part_of_speech} {definitions}".format(
+            number=number,
+            part_of_speech=part_of_speech,
+            definitions=definitions))
+    result = "{word} | {meanings}".format(
+        word=word, meanings='; '.join(meanings))
+    other_forms = format_words_and_readings(japanese[1:])
+    if other_forms:
+        result += " | Other forms: {forms}".format(forms=other_forms)
+    return result
