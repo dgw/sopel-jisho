@@ -2,7 +2,7 @@
 
 Jisho lookup plugin for Sopel IRC bots.
 
-Copyright 2016, dgw
+Copyright 2016-2026, dgw
 Licensed under the GPL v3.0 or later
 """
 from __future__ import annotations
