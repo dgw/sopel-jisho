@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=63.0", "wheel"]
+requires = ["setuptools>=77.0.3", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
@@ -21,14 +21,14 @@ authors = [
   { name="dgw", email="dgw@technobabbl.es" },
 ]
 
-license = { text="GPL-3.0" }
+license = "GPL-3.0-only"
+license-files = ["COPYING"]
 dynamic = ["readme"]
 
 classifiers = [
   "Development Status :: 4 - Beta",
   "Intended Audience :: Developers",
   "Intended Audience :: System Administrators",
-  "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
   "Topic :: Communications :: Chat :: Internet Relay Chat",
 ]
 keywords = [
