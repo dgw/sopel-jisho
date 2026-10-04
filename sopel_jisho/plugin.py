@@ -23,7 +23,48 @@ request_headers = {
 @plugin.example('.ji onsen')
 def jisho(bot, trigger):
     query = trigger.group(2) or None
-    bot.say(fetch_result(query), truncation='...')
+    try:
+        results = fetch_results(query)
+    except JishoError as e:
+        bot.say(str(e))
+        return
+
+    try:
+        entry = results['data'][0]
+    except IndexError:
+        bot.say("No results.")
+        return
+
+    message, link = format_output(entry)
+    bot.say(message, truncation=' …', trailing=' | ' + link)
+
+
+class JishoError(Exception):
+    """Custom exception for Jisho API errors."""
+
+
+def format_output(entry: dict) -> tuple[str, str]:
+    """Expects just one "word" entry from the search response.
+
+    Returns a tuple of (formatted message, word URL).
+    """
+    japanese = entry['japanese']
+    word = format_words_and_readings(japanese[:1])
+    meanings = []
+    for number, sense in enumerate(entry['senses'], start=1):
+        parts_of_speech = ', '.join(sense.get('parts_of_speech', []))
+        definitions = ', '.join(sense['english_definitions'])
+        part_of_speech = " ({})".format(parts_of_speech) if parts_of_speech else ''
+        meanings.append("{number}.{part_of_speech} {definitions}".format(
+            number=number,
+            part_of_speech=part_of_speech,
+            definitions=definitions))
+    out = "{word} | {meanings}".format(
+        word=word, meanings='; '.join(meanings))
+    other_forms = format_words_and_readings(japanese[1:])
+    if other_forms:
+        out += " | Other forms: {forms}".format(forms=other_forms)
+    return out, 'https://jisho.org/word/' + entry['slug']
 
 
 # Tempted to use TypedDict and specify the expected keys, but... overkill
@@ -39,50 +80,29 @@ def format_words_and_readings(items: list[dict[str, str]]) -> str:
     return ', '.join(forms)
 
 
-def fetch_result(query: str | None) -> str:
+def fetch_results(query: str | None) -> dict:
     if not query:
-        return "No search query provided."
+        raise JishoError("No search query provided.")
     try:
         r = requests.get(
             url=api_url % query,
             headers=request_headers,
             timeout=(10.0, 4.0),)
     except requests.exceptions.ConnectTimeout:
-        return "Connection timed out."
+        raise JishoError("Connection timed out.")
     except requests.exceptions.ConnectionError:
-        return "Couldn't connect to server."
+        raise JishoError("Couldn't connect to server.")
     except requests.exceptions.ReadTimeout:
-        return "Server took too long to send data."
+        raise JishoError("Server took too long to send data.")
     try:
         r.raise_for_status()
     except requests.exceptions.HTTPError as e:
-        return "HTTP error: " + str(e)
+        raise JishoError("HTTP error: " + str(e))
     try:
         data = r.json()
     except ValueError:
-        return r.content
+        raise JishoError(r.content)
     if data['meta']['status'] != 200:
-        return "Jisho API returned error code %s" % data['meta']['status']
+        raise JishoError("Jisho API returned error code %s" % data['meta']['status'])
 
-    try:
-        entry = data['data'][0]
-    except IndexError:
-        return "No results."
-
-    japanese = entry['japanese']
-    word = format_words_and_readings(japanese[:1])
-    meanings = []
-    for number, sense in enumerate(entry['senses'], start=1):
-        parts_of_speech = ', '.join(sense.get('parts_of_speech', []))
-        definitions = ', '.join(sense['english_definitions'])
-        part_of_speech = " ({})".format(parts_of_speech) if parts_of_speech else ''
-        meanings.append("{number}.{part_of_speech} {definitions}".format(
-            number=number,
-            part_of_speech=part_of_speech,
-            definitions=definitions))
-    result = "{word} | {meanings}".format(
-        word=word, meanings='; '.join(meanings))
-    other_forms = format_words_and_readings(japanese[1:])
-    if other_forms:
-        result += " | Other forms: {forms}".format(forms=other_forms)
-    return result
+    return data
