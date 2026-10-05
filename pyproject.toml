@@ -14,7 +14,7 @@ readme = { file=["README.md", "NEWS"], content-type="text/markdown" }
 
 [project]
 name = "sopel-jisho"
-version = "0.1.0"
+version = "1.0.0"
 description = "Jisho lookup plugin for Sopel IRC bots."
 
 authors = [
@@ -41,6 +41,7 @@ keywords = [
 requires-python = ">=3.8, <4"
 dependencies = [
     "sopel>=8.0",
+    "requests",  # sopel gets to constrain the version itself
 ]
 
 [project.urls]

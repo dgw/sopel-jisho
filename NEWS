@@ -1,5 +1,14 @@
 ## Changelog
 
+### 1.0.0
+
+Overhauled with better output:
+
+- Output as many senses as will fit in an IRC line, not just the first one
+- Senses are numbered and labeled with part-of-speech if available
+- Always end with a link to the Jisho page for that word
+
+
 ### 0.1.0
 
 First packaged release of `sopel-jisho`.

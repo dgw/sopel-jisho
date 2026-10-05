@@ -22,14 +22,12 @@ Commands & arguments:
 
 ## Notes
 
-This plugin has beta-level functionality. It can search and display most
-queries, but may not correctly deal with incomplete API responses (for example,
-words that have no readings). That said, anything that doesn't behave as
-expected should be reported in the plugin's [issue tracker][] if it isn't
-already listed there (be sure to **also search closed issues!**).
+The plugin is more or less stable. In testing, this version has not yet failed
+to output definitions when available.
 
-Jisho's API is undocumented and subject to change, so there are sure to be edge
-cases where the code receives something it doesn't expect. Some of these are
-handled. Others aren't…yet. Report problematic queries to the issue tracker.
+However, Jisho's API is undocumented and subject to change, so there are sure to
+be edge cases where the code receives something it doesn't expect. Some of these
+are handled. Others aren't…yet. Check the [issue tracker][] if you run into
+anything that doesn't seem to work correctly, and create a report if needed.
 
 [issue tracker]: https://github.com/dgw/sopel-jisho/issues
